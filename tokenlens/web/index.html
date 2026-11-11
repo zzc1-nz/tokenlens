@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TokenLens · LLM Token 成本观测台</title>
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+<link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+
+<!-- ============================== top bar ============================== -->
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="2" />
+      <circle cx="16" cy="16" r="5" fill="currentColor" />
+      <path d="M16 3v5M16 24v5M3 16h5M24 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+    </svg>
+    <div class="brand-text">
+      <span class="brand-name">TokenLens</span>
+      <span class="brand-sub">LLM Token 成本观测台</span>
+    </div>
+  </div>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="主导航">
+    <button class="tab is-active" role="tab" data-tab="overview" aria-selected="true">总览</button>
+    <button class="tab" role="tab" data-tab="dimensions" aria-selected="false">维度</button>
+    <button class="tab" role="tab" data-tab="trends" aria-selected="false">趋势</button>
+    <button class="tab" role="tab" data-tab="budgets" aria-selected="false">预算与告警</button>
+    <button class="tab" role="tab" data-tab="anomalies" aria-selected="false">异常检测</button>
+    <button class="tab" role="tab" data-tab="simulator" aria-selected="false">模拟器</button>
+  </nav>
+
+  <div class="topbar-status">
+    <span class="live-dot" id="conn-dot" data-state="unknown"></span>
+    <span class="conn-label" id="conn-label">连接中…</span>
+    <span class="conn-sep">·</span>
+    <span class="clock" id="clock">--:--:--</span>
+    <button class="btn btn-ghost btn-sm" id="refresh-all" title="立即刷新当前页面">刷新</button>
+  </div>
+</header>
+
+<main class="main" id="main">
+
+  <!-- ============================== 1. 总览 ============================== -->
+  <section class="panel is-active" id="panel-overview" role="tabpanel">
+    <div class="panel-head">
+      <h2>总览</h2>
+      <p class="panel-hint">每 3 秒自动刷新 · <span id="overview-generated">等待数据…</span></p>
+    </div>
+
+    <div class="kpi-grid" id="kpi-grid">
+      <article class="kpi" data-kpi="today">
+        <span class="kpi-label">今日成本</span>
+        <strong class="kpi-value" id="kpi-today-cost">—</strong>
+        <span class="kpi-meta" id="kpi-today-tokens">— tokens</span>
+      </article>
+      <article class="kpi" data-kpi="week">
+        <span class="kpi-label">本周成本</span>
+        <strong class="kpi-value" id="kpi-week-cost">—</strong>
+        <span class="kpi-meta">滚动 7 天预算视角</span>
+      </article>
+      <article class="kpi" data-kpi="month">
+        <span class="kpi-label">本月成本</span>
+        <strong class="kpi-value" id="kpi-month-cost">—</strong>
+        <span class="kpi-meta">自然月（Asia/Shanghai）</span>
+      </article>
+      <article class="kpi" data-kpi="burn">
+        <span class="kpi-label">燃烧速率</span>
+        <strong class="kpi-value" id="kpi-burn-rate">—</strong>
+        <span class="kpi-meta" id="kpi-burn-cost">— / 小时</span>
+      </article>
+      <article class="kpi" data-kpi="cache">
+        <span class="kpi-label">缓存命中率</span>
+        <strong class="kpi-value" id="kpi-cache-hit">—</strong>
+        <div class="kpi-bar"><i id="kpi-cache-bar" style="width:0%"></i></div>
+      </article>
+      <article class="kpi" data-kpi="agents">
+        <span class="kpi-label">活跃 Agent / 项目</span>
+        <strong class="kpi-value" id="kpi-active-agents">—</strong>
+        <span class="kpi-meta" id="kpi-active-projects">— 个项目 · — 会话</span>
+      </article>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <header class="card-head">
+          <h3>每小时成本</h3>
+          <span class="card-sub" id="spark-sub">最近 24 小时</span>
+        </header>
+        <div class="chart-wrap" id="sparkline-wrap">
+          <svg class="chart" id="sparkline" viewBox="0 0 640 180" preserveAspectRatio="none" role="img" aria-label="每小时成本走势"></svg>
+          <div class="chart-empty" id="sparkline-empty">暂无数据</div>
+        </div>
+        <footer class="card-foot" id="sparkline-foot"></footer>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <h3>每日成本</h3>
+          <span class="card-sub" id="daily-sub">最近 7 天</span>
+        </header>
+        <div class="chart-wrap">
+          <svg class="chart" id="daily-chart" viewBox="0 0 640 180" preserveAspectRatio="none" role="img" aria-label="每日成本走势"></svg>
+          <div class="chart-empty" id="daily-chart-empty">暂无数据</div>
+        </div>
+        <footer class="card-foot" id="daily-chart-foot"></footer>
+      </article>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <header class="card-head">
+          <h3>预算进度</h3>
+          <span class="card-sub" id="budget-summary-sub">—</span>
+        </header>
+        <div class="budget-bars" id="overview-budgets">
+          <p class="empty">暂无预算，请到「预算与告警」创建。</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <h3>最近告警</h3>
+          <a class="card-link" href="#" data-goto="budgets">查看全部 →</a>
+        </header>
+        <div class="mini-list" id="overview-alerts">
+          <p class="empty">暂无告警。</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <header class="card-head">
+          <h3>最近异常</h3>
+          <a class="card-link" href="#" data-goto="anomalies">查看全部 →</a>
+        </header>
+        <div class="mini-list" id="overview-anomalies">
+          <p class="empty">暂无异常。</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <header class="card-head"><h3>Top 项目 / Agent</h3></header>
+        <div class="split-lists">
+          <div>
+            <h4 class="list-title">项目</h4>
+            <div class="mini-bars" id="overview-top-projects"><p class="empty">暂无数据</p></div>
+          </div>
+          <div>
+            <h4 class="list-title">Agent</h4>
+            <div class="mini-bars" id="overview-top-agents"><p class="empty">暂无数据</p></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================== 2. 维度 ============================== -->
+  <section class="panel" id="panel-dimensions" role="tabpanel" hidden>
+    <div class="panel-head">
+      <h2>维度</h2>
+      <p class="panel-hint">按成本占比排序 · 点击表头切换排序 · 数据来自 <code>/api/v1/usage/breakdown</code></p>
+    </div>
+
+    <div class="toolbar">
+      <div class="segmented" id="dimension-switch" role="group" aria-label="维度切换">
+        <button class="seg is-active" data-dimension="project">项目</button>
+        <button class="seg" data-dimension="agent">Agent</button>
+        <button class="seg" data-dimension="model">模型</button>
+        <button class="seg" data-dimension="runtime">运行时</button>
+      </div>
+      <label class="field-inline">
+        <span>窗口</span>
+        <select id="dimension-window">
+          <option value="24">最近 24 小时</option>
+          <option value="168" selected>最近 7 天</option>
+          <option value="720">最近 30 天</option>
+        </select>
+      </label>
+      <span class="toolbar-note" id="dimension-note">—</span>
+    </div>
+
+    <article class="card card-table">
+      <table class="data-table" id="dimension-table">
+        <thead>
+          <tr>
+            <th class="sortable" data-sort="label">名称</th>
+            <th class="sortable num" data-sort="cost_usd">成本 (USD)</th>
+            <th class="sortable num" data-sort="share_pct">占比</th>
+            <th class="sortable num" data-sort="total_tokens">总 Tokens</th>
+            <th class="sortable num" data-sort="input_tokens">输入</th>
+            <th class="sortable num" data-sort="output_tokens">输出</th>
+            <th class="sortable num" data-sort="cache_read_tokens">缓存读</th>
+            <th class="sortable num" data-sort="requests">请求</th>
+            <th class="sortable num" data-sort="cache_hit_rate">命中率</th>
+            <th class="share-col">占比条</th>
+          </tr>
+        </thead>
+        <tbody id="dimension-tbody">
+          <tr><td colspan="10" class="empty">加载中…</td></tr>
+        </tbody>
+      </table>
+      <footer class="card-foot" id="dimension-foot"></footer>
+    </article>
+  </section>
+
+  <!-- ============================== 3. 趋势 ============================== -->
+  <section class="panel" id="panel-trends" role="tabpanel" hidden>
+    <div class="panel-head">
+      <h2>趋势</h2>
+      <p class="panel-hint">折线 + 面积图（手写 SVG）· 支持按 Agent / 模型过滤</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="segmented" id="trend-period" role="group" aria-label="周期切换">
+        <button class="seg is-active" data-period="day">日</button>
+        <button class="seg" data-period="week">周</button>
+        <button class="seg" data-period="month">月</button>
+      </div>
+      <label class="field-inline">
+        <span>Agent</span>
+        <select id="trend-agent"><option value="">全部</option></select>
+      </label>
+      <label class="field-inline">
+        <span>模型</span>
+        <select id="trend-model"><option value="">全部</option></select>
+      </label>
+      <label class="field-inline">
+        <span>指标</span>
+        <select id="trend-metric">
+          <option value="cost_usd" selected>成本 (USD)</option>
+          <option value="total_tokens">总 Tokens</option>
+          <option value="requests">请求数</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" id="trend-export">导出 CSV</button>
+      <span class="toolbar-note" id="trend-note">—</span>
+    </div>
+
+    <div class="grid-2 trend-grid">
+      <article class="card">
+        <header class="card-head">
+          <h3 id="trend-chart-title">成本趋势</h3>
+          <span class="card-sub" id="trend-chart-sub">—</span>
+        </header>
+        <div class="chart-wrap tall">
+          <svg class="chart" id="trend-chart" viewBox="0 0 720 260" preserveAspectRatio="none" role="img" aria-label="趋势折线图"></svg>
+          <div class="chart-empty" id="trend-chart-empty">暂无数据</div>
+          <div class="chart-tooltip" id="trend-tooltip" hidden></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <header class="card-head"><h3>周期对比</h3></header>
+        <div class="compare-grid" id="trend-comparison">
+          <p class="empty">暂无数据</p>
+        </div>
+      </article>
+    </div>
+
+    <article class="card card-table">
+      <header class="card-head"><h3>数据点</h3></header>
+      <table class="data-table compact" id="trend-table">
+        <thead>
+          <tr>
+            <th>时间桶</th>
+            <th class="num">成本 (USD)</th>
+            <th class="num">总 Tokens</th>
+            <th class="num">请求</th>
+            <th class="num">缓存命中率</th>
+            <th class="num">平均成本/请求</th>
+          </tr>
+        </thead>
+        <tbody id="trend-tbody"><tr><td colspan="6" class="empty">加载中…</td></tr></tbody>
+      </table>
+    </article>
+  </section>
+
+  <!-- ============================== 4. 预算与告警 ============================== -->
+  <section class="panel" id="panel-budgets" role="tabpanel" hidden>
+    <div class="panel-head">
+      <h2>预算与告警</h2>
+      <p class="panel-hint">阈值告警：同一窗口同一阈值只发一次通知，重复突破只累加触发次数</p>
+    </div>
+
+    <div class="grid-2 budget-grid">
+      <article class="card">
+        <header class="card-head"><h3>创建预算</h3></header>
+        <form class="form" id="budget-form" autocomplete="off">
+          <label class="field">
+            <span>名称 <em>*</em></span>
+            <input type="text" name="name" id="budget-name" placeholder="team-daily" required maxlength="120" />
+          </label>
+          <div class="field-row">
+            <label class="field">
+              <span>作用域</span>
+              <select name="scope" id="budget-scope">
+                <option value="global" selected>全局</option>
+                <option value="project">项目</option>
+                <option value="agent">Agent</option>
+                <option value="model">模型</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>作用域键</span>
+              <input type="text" name="scope_key" id="budget-scope-key" placeholder="*" value="*" maxlength="200" />
+            </label>
+          </div>
+          <div class="field-row">
+            <label class="field">
+              <span>周期</span>
+              <select name="period" id="budget-period">
+                <option value="daily" selected>每日</option>
+                <option value="weekly">每周</option>
+                <option value="monthly">每月</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>限额 (USD) <em>*</em></span>
+              <input type="number" name="limit_usd" id="budget-limit" min="0.01" step="0.01" value="25" required />
+            </label>
+          </div>
+          <label class="field">
+            <span>阈值（逗号分隔，升序）</span>
+            <input type="text" name="thresholds" id="budget-thresholds" value="0.5,0.8,1.0" />
+          </label>
+          <label class="field">
+            <span>Webhook URL（可选）</span>
+            <input type="url" name="webhook_url" id="budget-webhook" placeholder="https://hooks.example.com/tokenlens" />
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="desktop" id="budget-desktop" checked />
+            <span>启用桌面通知</span>
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="budget-submit">创建预算</button>
+            <button type="button" class="btn btn-ghost" id="budget-evaluate">立即评估</button>
+            <span class="form-msg" id="budget-form-msg"></span>
+          </div>
+        </form>
+      </article>
+
+      <article class="card">
+        <header class="card-head">
+          <h3>告警汇总</h3>
+          <span class="card-sub" id="alert-summary-sub">—</span>
+        </header>
+        <div class="summary-grid" id="alert-summary">
+          <p class="empty">暂无告警。</p>
+        </div>
+      </article>
+    </div>
+
+    <article class="card">
+      <header class="card-head"><h3>预算状态</h3><span class="card-sub" id="budget-list-sub">—</span></header>
+      <div class="budget-cards" id="budget-cards">
+        <p class="empty">暂无预算。</p>
+      </div>
+    </article>
+
+    <article class="card card-table">
+      <header class="card-head">
+        <h3>告警记录</h3>
+        <span class="card-sub">含触发次数与超支金额</span>
+      </header>
+      <table class="data-table" id="alert-table">
+        <thead>
+          <tr>
+            <th>时间</th>
+            <th>预算</th>
+            <th>作用域</th>
+            <th class="num">阈值</th>
+            <th>级别</th>
+            <th class="num">花费</th>
+            <th class="num">限额</th>
+            <th class="num">超支</th>
+            <th class="num">触发次数</th>
+            <th>渠道</th>
+          </tr>
+        </thead>
+        <tbody id="alert-tbody"><tr><td colspan="10" class="empty">加载中…</td></tr></tbody>
+      </table>
+    </article>
+  </section>
+
+  <!-- ============================== 5. 异常检测 ============================== -->
+  <section class="panel" id="panel-anomalies" role="tabpanel" hidden>
+    <div class="panel-head">
+      <h2>异常检测</h2>
+      <p class="panel-hint">中位数 / MAD 稳健 z-score · 按根因分类（重试风暴 / 上下文膨胀 / 工具返回数据未压缩 / 缓存命中崩塌 / 流量尖峰）</p>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-primary" id="anomaly-detect">立即检测</button>
+      <label class="field-inline">
+        <span>回溯</span>
+        <select id="anomaly-lookback">
+          <option value="30">30 分钟</option>
+          <option value="60" selected>60 分钟</option>
+          <option value="180">180 分钟</option>
+        </select>
+      </label>
+      <label class="field-inline">
+        <span>状态</span>
+        <select id="anomaly-status-filter">
+          <option value="">全部</option>
+          <option value="open">待处理</option>
+          <option value="acknowledged">已确认</option>
+          <option value="resolved">已解决</option>
+        </select>
+      </label>
+      <span class="toolbar-note" id="anomaly-note">—</span>
+    </div>
+
+    <div class="summary-grid anomaly-summary" id="anomaly-summary">
+      <p class="empty">暂无异常。</p>
+    </div>
+
+    <div class="anomaly-cards" id="anomaly-cards">
+      <p class="empty">暂无异常事件。</p>
+    </div>
+  </section>
+
+  <!-- ============================== 6. 模拟器 ============================== -->
+  <section class="panel" id="panel-simulator" role="tabpanel" hidden>
+    <div class="panel-head">
+      <h2>模拟器</h2>
+      <p class="panel-hint">用真实 HTTP 流量压测整条管道：采集 → 计价 → 存储 → 聚合 → 预算 / 异常</p>
+    </div>
+
+    <div class="grid-2">
+      <article class="card">
+        <header class="card-head"><h3>生成负载</h3></header>
+        <p class="card-text">
+          在仓库根目录执行。所有流量都走公开的 <code>POST /api/v1/ingest/snapshots</code>，
+          每批最多 500 条快照，带 <code>event_id</code> 保证幂等。
+        </p>
+        <pre class="code-block"><code>python tools/simulate.py --server http://127.0.0.1:8787 \
+  --mode mixed --duration 60 --agents 6 --projects 4 \
+  --sessions 40 --target-tokens 1000000 --seed 42 --report</code></pre>
+        <p class="card-text muted">先把服务跑起来：</p>
+        <pre class="code-block"><code>python -m uvicorn tokenlens.app:app --port 8787</code></pre>
+      </article>
+
+      <article class="card">
+        <header class="card-head"><h3>注入异常</h3></header>
+        <p class="card-text">
+          <code>--mode incident</code> 会同时注入三类根因，让检测器有东西可找：
+          重试风暴（高重试率）、上下文膨胀（超大 context_window）、工具返回未压缩（超大 tool_result_bytes）。
+        </p>
+        <pre class="code-block"><code>python tools/simulate.py --server http://127.0.0.1:8787 \
+  --mode incident --duration 45 --agents 3 --seed 7 \
+  --inject anomalies --report</code></pre>
+        <p class="card-text muted">然后用 curl 触发检测：</p>
+        <pre class="code-block"><code>curl -X POST "http://127.0.0.1:8787/api/v1/anomalies/detect?lookback_minutes=60"</code></pre>
+      </article>
+    </div>
+
+    <article class="card">
+      <header class="card-head"><h3>参数速查</h3></header>
+      <table class="data-table compact">
+        <thead><tr><th>参数</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>--mode</code></td><td><code>burst</code> / <code>steady</code> / <code>incident</code> / <code>mixed</code></td></tr>
+          <tr><td><code>--duration</code></td><td>持续时间（秒）</td></tr>
+          <tr><td><code>--agents</code> / <code>--projects</code> / <code>--sessions</code></td><td>并发维度规模</td></tr>
+          <tr><td><code>--target-tokens</code></td><td>达到目标 token 数后停止</td></tr>
+          <tr><td><code>--concurrency</code></td><td>HTTP 并发数</td></tr>
+          <tr><td><code>--seed</code></td><td>随机种子，保证可复现</td></tr>
+          <tr><td><code>--dry-run</code></td><td>只生成不发请求（可单测）</td></tr>
+          <tr><td><code>--report</code></td><td>打印吞吐量：snapshots/s、tokens/s、accepted/duplicates</td></tr>
+        </tbody>
+      </table>
+    </article>
+
+    <article class="card">
+      <header class="card-head"><h3>命令行客户端</h3></header>
+      <p class="card-text">同样的数据也能在终端里看，适合 SSH / CI 场景：</p>
+      <pre class="code-block"><code>tokenlens hud      --server http://127.0.0.1:8787 --interval 1.0
+tokenlens summary  --server http://127.0.0.1:8787
+tokenlens breakdown --dimension agent
+tokenlens detect   --lookback 60 --evaluate-budgets</code></pre>
+    </article>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <span>TokenLens · 本地静态面板，无构建步骤、无外部依赖</span>
+  <span class="footer-sep">·</span>
+  <a href="/docs" target="_blank" rel="noopener">API 文档</a>
+</footer>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="/static/charts.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

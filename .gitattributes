@@ -1,0 +1,10 @@
+# Normalise line endings so Windows/macOS/Linux checkouts agree.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary
+*.db binary
+*.png binary
+*.jpg binary
+*.woff2 binary

@@ -1,0 +1,18 @@
+# TokenLens
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/*.jsonl
+data/*.csv
+data/samples/*.csv
+.pylibs/
+.pytest-tmp/
+.tmp/
+.venv/
+wheels/
+pytest-cache-files-*/
+
+__pycache__/
+*.pyc
+.pytest_cache/
+pipwrap.py

@@ -1,0 +1,404 @@
+{
+  "budgets": [
+    {
+      "budget": {
+        "id": 1,
+        "name": "全局日预算",
+        "scope": "global",
+        "scope_key": "*",
+        "period": "daily",
+        "limit_usd": 2.3325,
+        "thresholds": [
+          0.5,
+          0.8,
+          1.0
+        ],
+        "webhook_url": null,
+        "desktop": true,
+        "enabled": true,
+        "created_at": "2026-11-11T11:15:14.673000Z",
+        "updated_at": "2026-11-11T11:15:14.673000Z"
+      },
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "spent_usd": 3.382152,
+      "limit_usd": 2.3325,
+      "pct": 1.450012,
+      "remaining_usd": 0.0,
+      "projected_usd": 4.215816,
+      "projected_pct": 1.807424,
+      "status": "exceeded",
+      "triggered_thresholds": [
+        0.5,
+        0.8,
+        1.0
+      ],
+      "trigger_count": 0,
+      "overspend_usd": 1.049652,
+      "last_alert_at": null
+    },
+    {
+      "budget": {
+        "id": 2,
+        "name": "payments-api 日预算",
+        "scope": "project",
+        "scope_key": "payments-api",
+        "period": "daily",
+        "limit_usd": 0.7754,
+        "thresholds": [
+          0.5,
+          0.8,
+          1.0
+        ],
+        "webhook_url": null,
+        "desktop": true,
+        "enabled": true,
+        "created_at": "2026-11-11T11:15:14.690000Z",
+        "updated_at": "2026-11-11T11:15:14.690000Z"
+      },
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "spent_usd": 0.697859,
+      "limit_usd": 0.7754,
+      "pct": 0.899999,
+      "remaining_usd": 0.077541,
+      "projected_usd": 0.869873,
+      "projected_pct": 1.121838,
+      "status": "critical",
+      "triggered_thresholds": [
+        0.5,
+        0.8
+      ],
+      "trigger_count": 0,
+      "overspend_usd": 0.0,
+      "last_alert_at": null
+    },
+    {
+      "budget": {
+        "id": 3,
+        "name": "claude-code 日预算",
+        "scope": "agent",
+        "scope_key": "claude-code",
+        "period": "daily",
+        "limit_usd": 1.0619,
+        "thresholds": [
+          0.5,
+          0.8,
+          1.0
+        ],
+        "webhook_url": null,
+        "desktop": true,
+        "enabled": true,
+        "created_at": "2026-11-11T11:15:14.708000Z",
+        "updated_at": "2026-11-11T11:15:14.708000Z"
+      },
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "spent_usd": 0.584023,
+      "limit_usd": 1.0619,
+      "pct": 0.549979,
+      "remaining_usd": 0.477877,
+      "projected_usd": 0.727978,
+      "projected_pct": 0.685543,
+      "status": "warning",
+      "triggered_thresholds": [
+        0.5
+      ],
+      "trigger_count": 0,
+      "overspend_usd": 0.0,
+      "last_alert_at": null
+    }
+  ],
+  "evaluations": [
+    {
+      "evaluated": 3,
+      "triggered": 6
+    },
+    {
+      "evaluated": 3,
+      "triggered": 6
+    }
+  ],
+  "statuses": [
+    {
+      "budget": {
+        "id": 1,
+        "name": "全局日预算",
+        "scope": "global",
+        "scope_key": "*",
+        "period": "daily",
+        "limit_usd": 2.3325,
+        "thresholds": [
+          0.5,
+          0.8,
+          1.0
+        ],
+        "webhook_url": null,
+        "desktop": true,
+        "enabled": true,
+        "created_at": "2026-11-11T11:15:14.673000Z",
+        "updated_at": "2026-11-11T11:15:14.673000Z"
+      },
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "spent_usd": 3.382152,
+      "limit_usd": 2.3325,
+      "pct": 1.450012,
+      "remaining_usd": 0.0,
+      "projected_usd": 4.2158,
+      "projected_pct": 1.807417,
+      "status": "exceeded",
+      "triggered_thresholds": [
+        0.5,
+        0.8,
+        1.0
+      ],
+      "trigger_count": 2,
+      "overspend_usd": 1.049652,
+      "last_alert_at": "2026-11-11T11:15:14.735000Z"
+    },
+    {
+      "budget": {
+        "id": 2,
+        "name": "payments-api 日预算",
+        "scope": "project",
+        "scope_key": "payments-api",
+        "period": "daily",
+        "limit_usd": 0.7754,
+        "thresholds": [
+          0.5,
+          0.8,
+          1.0
+        ],
+        "webhook_url": null,
+        "desktop": true,
+        "enabled": true,
+        "created_at": "2026-11-11T11:15:14.690000Z",
+        "updated_at": "2026-11-11T11:15:14.690000Z"
+      },
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "spent_usd": 0.697859,
+      "limit_usd": 0.7754,
+      "pct": 0.899999,
+      "remaining_usd": 0.077541,
+      "projected_usd": 0.869871,
+      "projected_pct": 1.121835,
+      "status": "critical",
+      "triggered_thresholds": [
+        0.5,
+        0.8
+      ],
+      "trigger_count": 2,
+      "overspend_usd": 0.0,
+      "last_alert_at": "2026-11-11T11:15:14.735000Z"
+    },
+    {
+      "budget": {
+        "id": 3,
+        "name": "claude-code 日预算",
+        "scope": "agent",
+        "scope_key": "claude-code",
+        "period": "daily",
+        "limit_usd": 1.0619,
+        "thresholds": [
+          0.5,
+          0.8,
+          1.0
+        ],
+        "webhook_url": null,
+        "desktop": true,
+        "enabled": true,
+        "created_at": "2026-11-11T11:15:14.708000Z",
+        "updated_at": "2026-11-11T11:15:14.708000Z"
+      },
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "spent_usd": 0.584023,
+      "limit_usd": 1.0619,
+      "pct": 0.549979,
+      "remaining_usd": 0.477877,
+      "projected_usd": 0.727976,
+      "projected_pct": 0.685541,
+      "status": "warning",
+      "triggered_thresholds": [
+        0.5
+      ],
+      "trigger_count": 2,
+      "overspend_usd": 0.0,
+      "last_alert_at": "2026-11-11T11:15:14.735000Z"
+    }
+  ],
+  "alerts": [
+    {
+      "id": 6,
+      "budget_id": 3,
+      "budget_name": "claude-code 日预算",
+      "scope": "agent",
+      "scope_key": "claude-code",
+      "period": "daily",
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "threshold": 0.5,
+      "severity": "warning",
+      "spent_usd": 0.584023,
+      "limit_usd": 1.0619,
+      "overspend_usd": 0.0,
+      "trigger_count": 2,
+      "message": "预算「claude-code 日预算」已用 $0.58 / $1.06（55.0%），触发 50% 阈值。",
+      "channels": [
+        "desktop",
+        "log"
+      ],
+      "created_at": "2026-11-11T11:15:14.735000Z"
+    },
+    {
+      "id": 5,
+      "budget_id": 2,
+      "budget_name": "payments-api 日预算",
+      "scope": "project",
+      "scope_key": "payments-api",
+      "period": "daily",
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "threshold": 0.8,
+      "severity": "critical",
+      "spent_usd": 0.697859,
+      "limit_usd": 0.7754,
+      "overspend_usd": 0.0,
+      "trigger_count": 2,
+      "message": "预算「payments-api 日预算」已用 $0.70 / $0.78（90.0%），触发 80% 阈值。",
+      "channels": [
+        "desktop",
+        "log"
+      ],
+      "created_at": "2026-11-11T11:15:14.735000Z"
+    },
+    {
+      "id": 4,
+      "budget_id": 2,
+      "budget_name": "payments-api 日预算",
+      "scope": "project",
+      "scope_key": "payments-api",
+      "period": "daily",
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "threshold": 0.5,
+      "severity": "warning",
+      "spent_usd": 0.697859,
+      "limit_usd": 0.7754,
+      "overspend_usd": 0.0,
+      "trigger_count": 2,
+      "message": "预算「payments-api 日预算」已用 $0.70 / $0.78（90.0%），触发 50% 阈值。",
+      "channels": [
+        "desktop",
+        "log"
+      ],
+      "created_at": "2026-11-11T11:15:14.735000Z"
+    },
+    {
+      "id": 3,
+      "budget_id": 1,
+      "budget_name": "全局日预算",
+      "scope": "global",
+      "scope_key": "*",
+      "period": "daily",
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "threshold": 1.0,
+      "severity": "exceeded",
+      "spent_usd": 3.382152,
+      "limit_usd": 2.3325,
+      "overspend_usd": 1.049652,
+      "trigger_count": 2,
+      "message": "预算「全局日预算」已用 $3.38 / $2.33（145.0%），触发 100% 阈值。 已超支 $1.05。",
+      "channels": [
+        "desktop",
+        "log"
+      ],
+      "created_at": "2026-11-11T11:15:14.735000Z"
+    },
+    {
+      "id": 2,
+      "budget_id": 1,
+      "budget_name": "全局日预算",
+      "scope": "global",
+      "scope_key": "*",
+      "period": "daily",
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "threshold": 0.8,
+      "severity": "critical",
+      "spent_usd": 3.382152,
+      "limit_usd": 2.3325,
+      "overspend_usd": 1.049652,
+      "trigger_count": 2,
+      "message": "预算「全局日预算」已用 $3.38 / $2.33（145.0%），触发 80% 阈值。 已超支 $1.05。",
+      "channels": [
+        "desktop",
+        "log"
+      ],
+      "created_at": "2026-11-11T11:15:14.735000Z"
+    },
+    {
+      "id": 1,
+      "budget_id": 1,
+      "budget_name": "全局日预算",
+      "scope": "global",
+      "scope_key": "*",
+      "period": "daily",
+      "window_start": "2026-11-10T16:00:00Z",
+      "window_end": "2026-11-11T16:00:00Z",
+      "threshold": 0.5,
+      "severity": "warning",
+      "spent_usd": 3.382152,
+      "limit_usd": 2.3325,
+      "overspend_usd": 1.049652,
+      "trigger_count": 2,
+      "message": "预算「全局日预算」已用 $3.38 / $2.33（145.0%），触发 50% 阈值。 已超支 $1.05。",
+      "channels": [
+        "desktop",
+        "log"
+      ],
+      "created_at": "2026-11-11T11:15:14.735000Z"
+    }
+  ],
+  "summary": {
+    "total_alerts": 6,
+    "total_triggers": 12,
+    "by_severity": {
+      "warning": 3,
+      "critical": 2,
+      "exceeded": 1
+    },
+    "by_budget": [
+      {
+        "budget_id": 1,
+        "budget_name": "全局日预算",
+        "alerts": 3,
+        "triggers": 6,
+        "overspend_usd": 1.049652
+      },
+      {
+        "budget_id": 2,
+        "budget_name": "payments-api 日预算",
+        "alerts": 2,
+        "triggers": 4,
+        "overspend_usd": 0.0
+      },
+      {
+        "budget_id": 3,
+        "budget_name": "claude-code 日预算",
+        "alerts": 1,
+        "triggers": 2,
+        "overspend_usd": 0.0
+      }
+    ],
+    "total_overspend_usd": 1.049652,
+    "window": {
+      "from": "2026-11-11T11:15:14.735000Z",
+      "to": "2026-11-11T11:15:14.896000Z"
+    },
+    "last_triggered_at": "2026-11-11T11:15:14.820000Z"
+  }
+}

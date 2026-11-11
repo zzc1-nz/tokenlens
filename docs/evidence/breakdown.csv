@@ -1,0 +1,6 @@
+﻿dimension,key,label,share_pct,input_tokens,output_tokens,cache_read_tokens,cache_write_tokens,reasoning_tokens,total_tokens,billable_tokens,requests,retries,tool_calls,cost_usd,sessions,agents,projects,cache_hit_rate,avg_cost_per_request,avg_tokens_per_request
+agent,codex-cli,codex-cli,62.424338,7454365,181856,578738,55620,2270,8272849,7638491,309,6,303,11.329302,6,1,5,0.072044,0.036664,26772.97
+agent,claude-code,claude-code,23.110126,564124,153931,521909,54028,2262,1296254,720317,693,365,278,4.194223,6,1,5,0.480565,0.006052,1870.5
+agent,deepseek-agent,deepseek-agent,9.90273,2664434,133864,525660,55517,192,3379667,2798490,259,4,292,1.797232,6,1,5,0.164779,0.006939,13048.91
+agent,openai-proxy,openai-proxy,2.540563,143367,33936,190608,11767,2388,382066,179691,45,7,76,0.461083,4,1,5,0.570725,0.010246,8490.36
+agent,ollama-local,ollama-local,2.022243,105525,25058,139283,10449,1894,282209,132477,37,10,62,0.367014,4,1,5,0.568948,0.009919,7627.27

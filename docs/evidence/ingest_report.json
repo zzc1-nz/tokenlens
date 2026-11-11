@@ -1,0 +1,18 @@
+{
+  "target_tokens": 1000000,
+  "ingested_tokens": 1031162,
+  "batches": 2,
+  "snapshots_sent": 80,
+  "accepted": 80,
+  "duplicates": 0,
+  "rejected": 0,
+  "elapsed_seconds": 0.027,
+  "snapshots_per_second": 2952.3,
+  "tokens_per_second": 38054330.5,
+  "server_ingest_ms_total": 12.725,
+  "server_snapshots_per_second": 6286.8,
+  "total_cost_usd": 1.9955,
+  "price_version": "2025-11-01",
+  "models_in_catalog": 64,
+  "errors": []
+}
